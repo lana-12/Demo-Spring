@@ -37,9 +37,9 @@ public class Ville {
 
     @Override
     public String toString() {
-        return "VilleService{" +
-                "name='" + name + '\'' +
-                ", nbHabitants=" + nbHabitants +
+        return "VilleService {" + '\n' +
+                "name= " + name + '\n' +
+                ", nbHabitants=" + nbHabitants + '\n' +
                 '}';
     }
 }
