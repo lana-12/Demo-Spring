@@ -5,12 +5,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class Ville {
 
+    private Long id;
     private String name;
     private double nbHabitants;
 
     public Ville() {}
 
-    public Ville(String name, double nbHabitants) {
+    public Ville(Long id, String name, double nbHabitants) {
+        this.id = id;
         this.name = name;
         this.nbHabitants = nbHabitants;
     }
@@ -18,6 +20,16 @@ public class Ville {
 
 
     //Getters and Setters
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }

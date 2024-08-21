@@ -2,6 +2,7 @@ package com.lana.springdemo.controllers;
 
 import com.lana.springdemo.entities.Ville;
 import com.lana.springdemo.services.VilleService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import java.util.List;
 @RequestMapping("/villes")
 public class VilleController {
 
+    @Autowired
     private final VilleService villeService;
 
     public VilleController(VilleService villeService) {
@@ -33,15 +35,38 @@ public class VilleController {
         }
     }
 
+    @GetMapping("/id/{id}")
+    public ResponseEntity<Ville> getVilleById(@PathVariable Long id) {
+        Ville ville = villeService.findVilleById(id);
+        if (ville != null) {
+            return ResponseEntity.ok(ville);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(null);
+        }
+    }
+
+
     @PostMapping("/add")
     public ResponseEntity<String> createVille(@RequestBody Ville newVille) {
         return villeService.addVille(newVille);
     }
 
 
+    @PutMapping("/edit/{id}")
+    public ResponseEntity<String> updateVille(@PathVariable Long id, @RequestBody Ville newVille) {
+        Ville ville = villeService.findVilleById(id);
+        if (ville != null) {
+            return villeService.updateVille(newVille);
+        }
+        return null;
+    }
 
 
-
+    @DeleteMapping("/sup/{id}")
+    public ResponseEntity<String> deleteVille(@PathVariable Long id) {
+        return villeService.deleteVille(id);
+    }
 
 
 }
