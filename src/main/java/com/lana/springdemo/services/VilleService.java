@@ -16,7 +16,7 @@ import java.util.List;
 
 
 /**
- * Service class for managing a list of cities (Villes).
+ * Service class for managing a list of cities (Ville).
  */
 @Service
 public class VilleService {
@@ -38,6 +38,8 @@ public class VilleService {
 
         return villes;
     }
+
+
     /**
      * Search Ville by ID
      * @param id the ID of the Ville
