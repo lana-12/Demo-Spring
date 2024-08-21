@@ -1,19 +1,25 @@
 package com.lana.springdemo.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import org.springframework.stereotype.Service;
 
 @Entity
+@Table(name="ville")
 public class Ville {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name="name", nullable = false )
     private String name;
+
+    @Column(name="nb_habitants", nullable = false )
     private double nbHabitants;
+
+    @ManyToOne
+    @JoinColumn(name="dept_id")
+    private Departement departement;
 
     public Ville() {}
 

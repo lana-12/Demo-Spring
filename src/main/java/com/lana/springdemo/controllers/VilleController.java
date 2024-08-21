@@ -12,7 +12,7 @@ import java.util.List;
 @RequestMapping("/villes")
 public class VilleController {
 
-    @Autowired
+
     private final VilleService villeService;
 
     public VilleController(VilleService villeService) {
