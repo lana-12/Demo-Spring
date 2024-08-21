@@ -1,6 +1,7 @@
 package com.lana.springdemo.controllers;
 
 import com.lana.springdemo.services.HelloService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,15 +10,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/")
 public class HelloController {
 
-    private HelloService service;
+    @Autowired
+    private HelloService helloService;
 
     public HelloController(HelloService service) {
-        this.service = service;
+        this.helloService = service;
     }
 
 
-    @GetMapping("hello")
+    @GetMapping("/hello")
     public String hello() {
-        return service.salutations();
+        return helloService.salutations();
     }
 }
