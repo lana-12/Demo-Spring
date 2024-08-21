@@ -19,11 +19,13 @@ public class VilleController {
         this.villeService = villeService;
     }
 
+    //BDD=>ok
     @GetMapping
     public List<Ville> getVilles() {
         return villeService.findAllVilles();
     }
 
+    //BDD=>ok
     @GetMapping(path = "{name}")
     public ResponseEntity<String> getVilleByName(@PathVariable String name) {
         Ville ville = villeService.findVilleByName(name);
@@ -35,6 +37,7 @@ public class VilleController {
         }
     }
 
+    //BDD=>ok
     @GetMapping("/id/{id}")
     public ResponseEntity<Ville> getVilleById(@PathVariable Long id) {
         Ville ville = villeService.findVilleById(id);
@@ -46,20 +49,25 @@ public class VilleController {
         }
     }
 
-
-    @PostMapping("/add")
+    //BDD=>ok
+    @PostMapping("/create")
     public ResponseEntity<String> createVille(@RequestBody Ville newVille) {
         return villeService.addVille(newVille);
+
     }
 
-
+    //BDD=>ok
     @PutMapping("/edit/{id}")
-    public ResponseEntity<String> updateVille(@PathVariable Long id, @RequestBody Ville newVille) {
-        Ville ville = villeService.findVilleById(id);
-        if (ville != null) {
-            return villeService.updateVille(newVille);
-        }
-        return null;
+    public ResponseEntity<String> editVille(@PathVariable Long id, @RequestBody Ville newVille) {
+        newVille.setId(id);
+        return villeService.updateVille(newVille);
+
+        // TP4-5
+//        Ville ville = villeService.findVilleById(id);
+//        if (ville != null) {
+//            return villeService.updateVille(newVille);
+//        }
+//        return null;
     }
 
 
