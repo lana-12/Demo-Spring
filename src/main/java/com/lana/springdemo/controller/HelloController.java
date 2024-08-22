@@ -1,6 +1,6 @@
 package com.lana.springdemo.controllers;
 
-import com.lana.springdemo.services.HelloService;
+import com.lana.springdemo.service.HelloService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

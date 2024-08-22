@@ -2,6 +2,7 @@ package com.lana.springdemo.services;
 
 
 import com.lana.springdemo.entities.Departement;
+import com.lana.springdemo.repositories.DepartementRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,9 @@ public class DepartementService {
      */
     public List<Departement> findAllDpts() {
         List<Departement> depts = new ArrayList<>();
-        departementRepository.findAll().forEach(depts::add);
+        if(depts != null){
+            departementRepository.findAll().forEach(depts::add);
+        }
 
         return depts;
     }
@@ -43,6 +46,20 @@ public class DepartementService {
     public Departement findDepartementById(Long id) {
         return departementRepository.findById(id).orElse(null);
 
+    }
+
+    /**
+     * Retrieve code departement with id
+     * @param departementId
+     * @return
+     */
+    public String getDepartementCode(Long departementId) {
+        Optional<Departement> departement = departementRepository.findById(departementId);
+        if (departement.isPresent()) {
+            return departement.get().getCode();
+        } else {
+            throw new RuntimeException("Département non trouvé pour l'ID: " + departementId);
+        }
     }
 
     /**
@@ -104,6 +121,7 @@ public class DepartementService {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body("Ce Département avec cet id n'existe pas.");
     }
+
 
 
 }
