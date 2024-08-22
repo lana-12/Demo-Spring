@@ -1,8 +1,7 @@
 package com.lana.springdemo.controllers;
 
 import com.lana.springdemo.entities.Ville;
-import com.lana.springdemo.services.VilleService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.lana.springdemo.service.VilleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +35,21 @@ public class VilleController {
                     .body("La ville '" + name + "' n'existe pas");
         }
     }
+
+
+
+
+    @GetMapping("/search")
+    public ResponseEntity<?> findVillesByPrefix(@RequestParam String prefix) {
+        List<Ville> villes = villeService.findVillesByNameStartingWith(prefix);
+        if (villes.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Aucune ville trouvée pour le préfixe : " + prefix);
+        } else {
+            return ResponseEntity.ok(villes);
+        }
+    }
+
 
     //BDD=>ok
     @GetMapping("/id/{id}")

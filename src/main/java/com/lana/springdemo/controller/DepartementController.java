@@ -1,8 +1,7 @@
 package com.lana.springdemo.controllers;
 
 import com.lana.springdemo.entities.Departement;
-import com.lana.springdemo.entities.Ville;
-import com.lana.springdemo.services.DepartementService;
+import com.lana.springdemo.service.DepartementService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +21,11 @@ public class DepartementController {
     @GetMapping
     public List<Departement> getDpt() {
         return departementService.findAllDpts();
+    }
+
+    @GetMapping("/code/{id}")
+    public String getDptCode(@PathVariable Long id) {
+        return departementService.getDepartementCode(id);
     }
 
 

@@ -4,12 +4,10 @@ package com.lana.springdemo.services;
 import com.lana.springdemo.entities.Ville;
 import java.util.Optional;
 
-import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.lana.springdemo.repositories.VilleRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +56,21 @@ public class VilleService {
      */
     public Ville findVilleByName(String name) {
         return villeRepository.findByName(name);
+    }
+
+
+    /**
+     * Search ville startingWith/letter(s)
+     * @param prefix
+     * @return
+     */
+    public List<Ville> findVillesByNameStartingWith(String prefix) {
+
+        if (prefix != null) {
+            return villeRepository.findByNameStartingWith(prefix);
+
+        }
+        return null;
     }
 
     /**
