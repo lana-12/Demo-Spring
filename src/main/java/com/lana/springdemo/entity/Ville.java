@@ -1,7 +1,6 @@
-package com.lana.springdemo.entities;
+package com.lana.springdemo.entity;
 
 import jakarta.persistence.*;
-import org.springframework.stereotype.Service;
 
 @Entity
 @Table(name="ville")
@@ -23,10 +22,18 @@ public class Ville {
 
     public Ville() {}
 
-    public Ville(Long id, String name, double nbHabitants) {
+    public Ville(Long id, String name, double nbHabitants, Departement departement ) {
         this.id = id;
         this.name = name;
         this.nbHabitants = nbHabitants;
+        this.departement = departement;
+    }
+
+    public Ville(String name, double nbHabitants) {
+
+        this.name = name;
+        this.nbHabitants = nbHabitants;
+
     }
 
 
@@ -58,6 +65,13 @@ public class Ville {
         this.nbHabitants = nbHabitants;
     }
 
+    public Departement getDepartement() {
+        return departement;
+    }
+
+    public void setDepartement(Departement departement) {
+        this.departement = departement;
+    }
 
     @Override
     public String toString() {

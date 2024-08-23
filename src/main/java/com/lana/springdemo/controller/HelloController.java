@@ -1,4 +1,4 @@
-package com.lana.springdemo.controllers;
+package com.lana.springdemo.controller;
 
 import com.lana.springdemo.service.HelloService;
 import org.springframework.beans.factory.annotation.Autowired;

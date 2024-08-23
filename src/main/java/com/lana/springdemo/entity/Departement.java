@@ -1,4 +1,4 @@
-package com.lana.springdemo.entities;
+package com.lana.springdemo.entity;
 
 
 import jakarta.persistence.*;
@@ -58,6 +58,13 @@ public class Departement {
         this.code = code;
     }
 
+    public Set<Ville> getVilles() {
+        return villes;
+    }
+
+    public void setVilles(Set<Ville> villes) {
+        this.villes = villes;
+    }
 
     @Override
     public String toString() {
