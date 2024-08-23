@@ -1,10 +1,20 @@
-package com.lana.springdemo.services;
+package com.lana.springdemo.service;
 
 
-import com.lana.springdemo.entities.Ville;
+import com.lana.springdemo.entity.Departement;
+import com.lana.springdemo.entity.Ville;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Optional;
 
-import com.lana.springdemo.repositories.VilleRepository;
+import com.lana.springdemo.exception.SpringDemoException;
+import com.lana.springdemo.repository.DepartementRepository;
+import com.lana.springdemo.repository.VilleRepository;
+import jakarta.persistence.NoResultException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -19,11 +29,18 @@ import java.util.List;
 @Service
 public class VilleService {
 
-
+    @Autowired
     private VilleRepository villeRepository;
 
-    public VilleService(VilleRepository villeRepository) {
+    @Autowired
+    private DepartementRepository departementRepository;
+
+    @Value("${csv.file.path}")
+    private String csvFilePath;
+
+    public VilleService(VilleRepository villeRepository, DepartementRepository departementRepository) {
         this.villeRepository = villeRepository;
+        this.departementRepository = departementRepository;
     }
 
     /**
@@ -44,7 +61,13 @@ public class VilleService {
      * @return the Ville if found, null otherwise
      */
     public Ville findVilleById(Long id) {
-        return villeRepository.findById(id).orElse(null);
+        Ville result = null;
+        try {
+            result = villeRepository.findById(id).get();
+
+        } catch(NoResultException nre){
+        }
+        return result;
 
     }
 
@@ -73,15 +96,116 @@ public class VilleService {
         return null;
     }
 
+
+    /**
+     * Search ville with population > param
+     * @param minPopulation
+     * @return
+     */
+    public List<Ville> findVillesByMinPopulation(int minPopulation) {
+        return villeRepository.findByNbHabitantsGreaterThan(minPopulation);
+    }
+
+    /**
+     * Retrieves the list of cities whose population is between a minimum and maximum value
+     * Search ville with
+     * @param minPopulation
+     * @return
+     */
+    public List<Ville> findVillesByMinPopulationandByMawPopulation(int minPopulation, int maxPopulation) {
+        return villeRepository.findByNbHabitantsGreaterThanAndNbHabitantsLessThan(minPopulation, maxPopulation);
+    }
+
+
+    /**
+     * Retrieves all cities in a department where the population is greater than a minimum value
+     * @param departementId
+     * @param minPopulation
+     * @return
+     */
+    public List<Ville> findVillesByDepartementAndMinPopulation(Long departementId, int minPopulation) {
+        return villeRepository.findByDepartementIdAndNbHabitantsGreaterThan(departementId, minPopulation);
+    }
+
+
+    /**
+     * Retrieves all cities in a department where the population is greater than a minimum value and less than a maximum value
+     * @param departementId
+     * @param minPopulation
+     * @param maxPopulation
+     * @return
+     */
+    public List<Ville> findVillesByDepartementAndPopulationRange(Long departementId, int minPopulation, int maxPopulation) {
+        return villeRepository.findByDepartementIdAndNbHabitantsGreaterThanAndNbHabitantsLessThan(departementId, minPopulation, maxPopulation);
+    }
+
+
+
+    public List<Ville> findByDepartementCode(String codeDepartement) {
+        return villeRepository.findByDepartementCode(codeDepartement);
+    }
+
+//
+//    @Async
+//    public void exportToCsvOnDisk() {
+//    }
+
+    public void loadCsvFromDisk() {
+        try (BufferedReader br = new BufferedReader(new FileReader(csvFilePath))) {
+            String line;
+            br.readLine(); // Lire la première ligne d'en-tête et l'ignorer
+
+            while ((line = br.readLine()) != null) {
+                String[] columns = line.split(","); // Diviser la ligne en colonnes
+
+                // Récupérer les données nécessaires pour créer un objet Ville
+                String nameVille = columns[3]; // label
+                double nbHabitants = 0.0; // Utiliser 0 ou une autre valeur par défaut pour le nombre d'habitants
+                String codeDepartement = columns[7]; // department_number
+                String nomDepartement = columns[6]; // department_name
+
+                // Trouver ou créer un objet Departement
+                Departement departement = departementRepository.findByCode(codeDepartement);
+                if (departement == null) {
+                    departement = new Departement(nomDepartement, codeDepartement);
+                    departementRepository.save(departement);
+                }
+
+                // Créer une nouvelle ville
+                Ville ville = new Ville();
+                ville.setName(nameVille);
+                ville.setNbHabitants(nbHabitants);
+                ville.setDepartement(departement);
+
+                // Sauvegarder la ville dans la base de données
+                villeRepository.save(ville);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     /**
      * Create if unique id and name
      * @param newVille
      * @return
      */
     public ResponseEntity<String> addVille(Ville newVille) {
+        // Verif departement is null
+        if (newVille.getDepartement() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Le département est requis.");
+        }
 
+        // Verif departement isEmpty
+        if (newVille.getDepartement().getName() == null || newVille.getDepartement().getName().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Le nom du département est requis.");
+        }
+
+        // Verif ville isEmpty
         List<Ville> villes = this.findAllVilles();
-
         for (Ville ville : villes) {
             if (ville.getId().equals(newVille.getId())) {
                 return ResponseEntity.status(HttpStatus.CONFLICT)
@@ -92,6 +216,22 @@ public class VilleService {
                 return ResponseEntity.status(HttpStatus.CONFLICT)
                         .body("Une ville avec ce nom existe déjà.");
             }
+        }
+
+        // Search  département by name
+        Optional<Departement> departement = departementRepository.findByName(newVille.getDepartement().getName());
+
+        if (departement.isPresent()) {
+            newVille.setDepartement(departement.get());
+        } else {
+
+            Departement newDepartement = new Departement();
+            newDepartement.setName(newVille.getDepartement().getName());
+            newDepartement.setCode(newVille.getDepartement().getCode());
+
+            departementRepository.save(newDepartement);
+
+            newVille.setDepartement(newDepartement);
         }
 
 //        villes.add(newVille);

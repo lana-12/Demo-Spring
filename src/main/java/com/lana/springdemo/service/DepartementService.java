@@ -1,11 +1,17 @@
-package com.lana.springdemo.services;
+package com.lana.springdemo.service;
 
 
-import com.lana.springdemo.entities.Departement;
-import com.lana.springdemo.repositories.DepartementRepository;
+import com.lana.springdemo.entity.Departement;
+import com.lana.springdemo.entity.Ville;
+import com.lana.springdemo.repository.DepartementRepository;
+import com.lana.springdemo.repository.VilleRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,10 +24,15 @@ import java.util.Optional;
 @Service
 public class DepartementService {
 
+    @Autowired
     private DepartementRepository departementRepository;
 
-    public DepartementService(DepartementRepository departementRepository) {
+    @Autowired
+    private VilleRepository villeRepository;
+
+    public DepartementService(DepartementRepository departementRepository, VilleRepository villeRepository) {
         this.departementRepository = departementRepository;
+        this.villeRepository = villeRepository;
     }
 
 
@@ -36,6 +47,10 @@ public class DepartementService {
         }
 
         return depts;
+    }
+
+    public Departement findByCode(String code) {
+        return departementRepository.findByCode(code);
     }
 
     /**
@@ -62,6 +77,34 @@ public class DepartementService {
         }
     }
 
+
+    /**
+     * Retrieve the n ville of the departement
+     * @param departementId
+     * @param n
+     * @return
+     */
+    public List<Ville> findTopNVillesByDepartement(Long departementId, int n) {
+        Pageable pageable = PageRequest.of(0, n);
+        return villeRepository.findTopNVillesByDepartementId(departementId, pageable);
+    }
+
+
+
+    /**
+     * Retrieve the ville of the departement with population min and max
+     * @param codeDepartement
+     * @param minPopulation
+     * @param maxPopulation
+     * @return
+     */
+    public List<Ville> findVillesByDepartementAndPopulationRange(String codeDepartement, int minPopulation, int maxPopulation) {
+        return villeRepository.findByDepartement_CodeAndNbHabitantsBetween(codeDepartement, minPopulation, maxPopulation);
+
+
+
+
+    }
     /**
      * Create if unique id and name
      * @param newDepartement

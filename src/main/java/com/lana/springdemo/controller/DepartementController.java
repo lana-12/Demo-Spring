@@ -1,6 +1,7 @@
-package com.lana.springdemo.controllers;
+package com.lana.springdemo.controller;
 
-import com.lana.springdemo.entities.Departement;
+import com.lana.springdemo.entity.Departement;
+import com.lana.springdemo.entity.Ville;
 import com.lana.springdemo.service.DepartementService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,25 @@ public class DepartementController {
     public String getDptCode(@PathVariable Long id) {
         return departementService.getDepartementCode(id);
     }
+
+
+    @GetMapping("/{departementId}/villes/top/{n}")
+    public ResponseEntity<List<Ville>> getTopNVillesByDepartement(@PathVariable Long departementId, @PathVariable int n) {
+        List<Ville> villes = departementService.findTopNVillesByDepartement(departementId, n);
+        return ResponseEntity.ok(villes);
+    }
+
+    @GetMapping("/{codeDepartement}/villes/population-range")
+    public ResponseEntity<List<Ville>> getVillesByDepartementAndPopulationRange(
+            @PathVariable String codeDepartement,
+            @RequestParam int minPopulation,
+            @RequestParam int maxPopulation) {
+        List<Ville> villes = departementService.findVillesByDepartementAndPopulationRange(codeDepartement, minPopulation, maxPopulation);
+        return ResponseEntity.ok(villes);
+    }
+
+
+
 
 
     @PostMapping("/create")

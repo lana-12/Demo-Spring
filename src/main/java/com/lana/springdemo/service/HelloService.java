@@ -1,6 +1,5 @@
-package com.lana.springdemo.services;
+package com.lana.springdemo.service;
 
-import com.lana.springdemo.controllers.HelloController;
 import org.springframework.stereotype.Service;
 
 @Service
