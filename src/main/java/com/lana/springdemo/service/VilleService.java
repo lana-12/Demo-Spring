@@ -153,16 +153,18 @@ public class VilleService {
     public void loadCsvFromDisk() {
         try (BufferedReader br = new BufferedReader(new FileReader(csvFilePath))) {
             String line;
-            br.readLine(); // Lire la première ligne d'en-tête et l'ignorer
+            br.readLine();
 
             while ((line = br.readLine()) != null) {
-                String[] columns = line.split(","); // Diviser la ligne en colonnes
+                String[] columns = line.split(",");
+
+
 
                 // Récupérer les données nécessaires pour créer un objet Ville
-                String nameVille = columns[3]; // label
-                double nbHabitants = 0.0; // Utiliser 0 ou une autre valeur par défaut pour le nombre d'habitants
-                String codeDepartement = columns[7]; // department_number
-                String nomDepartement = columns[6]; // department_name
+                String nameVille = columns[3];
+                double nbHabitants = Double.parseDouble(columns[10]);
+                String codeDepartement = columns[7];
+                String nomDepartement = columns[6];
 
                 // Trouver ou créer un objet Departement
                 Departement departement = departementRepository.findByCode(codeDepartement);
